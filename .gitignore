@@ -30,3 +30,20 @@
 *.exe
 *.out
 *.app
+
+# fprime items
+logs/
+cmake-build-*
+build-artifacts/
+build-fprime-*
+*-template
+*.template.cpp
+*.template.hpp
+
+# Misc
+/venv/
+/.idea/
+/.vscode/
+.DS_Store
+*.gcov
+>>>>>>> 0d2920f (Create basic project with unit testing enabled)
