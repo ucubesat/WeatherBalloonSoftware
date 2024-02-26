@@ -41,7 +41,7 @@ build-fprime-*
 *.template.hpp
 
 # Misc
-/venv/
+/*venv/
 /.idea/
 /.vscode/
 .DS_Store
