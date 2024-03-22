@@ -1,60 +1,130 @@
 module Components {
+
+    enum ImgResolution { SIZE_4608x2519 = 0 }
+
     @ Satellite camera controller
     active component Camera {
+        # ----------------------------------------------------------------------
+        # General ports
+        # ----------------------------------------------------------------------
 
-        # One async command/port is required for active components
-        # This should be overridden by the developers with a useful command/port
-        @ TODO
-        async command TODO opcode 0
+        @ Allocates memory to hold photo buffers
+        output port allocate: Fw.BufferGet
 
-        ##############################################################################
-        #### Uncomment the following examples to start customizing your component ####
-        ##############################################################################
+        @ Deallocates memory that holds photo buffers
+        output port deallocate: Fw.BufferSend
 
-        # @ Example async command
-        # async command COMMAND_NAME(param_name: U32)
+        @ Save photo to disk, send image to buffer logger
+        output port $save: Fw.BufferSend
 
-        # @ Example telemetry counter
-        # telemetry ExampleCounter: U64
+        # ----------------------------------------------------------------------
+        # Special ports
+        # ----------------------------------------------------------------------
 
-        # @ Example event
-        # event ExampleStateEvent(example_state: Fw.On) severity activity high id 0 format "State set to {}"
-
-        # @ Example port: receiving calls from the rate group
-        # sync input port run: Svc.Sched
-
-        # @ Example parameter
-        # param PARAMETER_NAME: U32
-
-        ###############################################################################
-        # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
-        ###############################################################################
-        @ Port for requesting the current time
-        time get port timeCaller
-
-        @ Port for sending command registrations
-        command reg port cmdRegOut
-
-        @ Port for receiving commands
+        @ Command receive
         command recv port cmdIn
 
-        @ Port for sending command responses
+        @ Command registration
+        command reg port cmdRegOut
+
+        @ Command response
         command resp port cmdResponseOut
 
-        @ Port for sending textual representation of events
-        text event port logTextOut
+        @ Port for emitting events
+        event port Log
 
-        @ Port for sending events to downlink
-        event port logOut
+        @ Port for emitting text events
+        text event port LogText
 
-        @ Port for sending telemetry channels to downlink
-        telemetry port tlmOut
+        @ Port for getting the time
+        time get port Time
+
+        @ Telemetry port
+        telemetry port Tlm
 
         @ Port to return the value of a parameter
         param get port prmGetOut
 
         @Port to set the value of a parameter
         param set port prmSetOut
+
+        # ----------------------------------------------------------------------
+        # Commands
+        # ----------------------------------------------------------------------
+
+        @ Capture image and save the raw data
+        async command CaptureImage() \
+        opcode 0x01
+
+        # ----------------------------------------------------------------------
+        # Events
+        # ----------------------------------------------------------------------
+        
+        @ Event where no camera was detected
+        event CameraNotDetected \
+        severity warning high \
+        format "No cameras were detected" \
+        
+        @ Event where error occurred when setting up camera
+        event CameraOpenError \
+        severity warning high \
+        format "Camera failed to open" \
+
+        @ Event where camera is already open
+        event CameraAlreadyOpen \
+        severity activity low \
+        format "The Camera is already open" \
+
+        event CameraSave \
+        severity activity low \
+        format "Image was saved"
+
+        @ Camera failed to capture image
+        event CameraCaptureFail \
+        severity warning high \
+        format "Camera failed to capture image"
+
+        @ Event image configuration has been set
+        event SetImgConfig(
+            resolution: ImgResolution @< Image size,
+            ) \
+        severity activity high \
+        format "The image resolution has been set to {}" \
+
+        @ Failed to set size and color format
+        event ImgConfigSetFail(
+            resolution: ImgResolution @< Image size
+            ) \
+        severity warning high \
+        format "Image resolution of {} failed to set" \
+
+        @ Blank frame Error
+        event BlankFrame \
+        severity warning high \
+        format "Error: Blank frame was grabbed" \
+
+        @ Invalid buffer size error
+        event InvalidBufferSizeError(
+            imgBufferSize: U32 @< size of imgBuffer to hold image data
+            imgSize: U32 @< size of image
+        ) \
+        severity warning high \
+        format "imgBuffer of size {} is less than imgSize of size {}"
+
+        # ----------------------------------------------------------------------
+        # Telemetry
+        # ----------------------------------------------------------------------
+
+        @ Total number of files captured
+        telemetry photosTaken: U32 id 0 update on change
+
+
+        # ----------------------------------------------------------------------
+        # Parameters
+        # ----------------------------------------------------------------------
+        
+        @ Image resolution that the camera should be configured for
+        param IMG_RESOLUTION: ImgResolution
 
     }
 }

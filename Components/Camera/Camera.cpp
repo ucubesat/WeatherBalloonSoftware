@@ -31,7 +31,7 @@ namespace Components {
   // ----------------------------------------------------------------------
 
   void Camera ::
-    TODO_cmdHandler(
+    CaptureImage_cmdHandler(
         FwOpcodeType opCode,
         U32 cmdSeq
     )
