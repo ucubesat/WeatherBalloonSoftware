@@ -7,3 +7,4 @@
 4. Enter the virutal environment
 5. Run 
 ```pip install fprime-tools```
+6. Reference the libcamera library for build instructions here https://github.com/raspberrypi/libcamera
