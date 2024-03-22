@@ -84,6 +84,8 @@ namespace Components {
 	    std::map<libcamera::FrameBuffer *, std::vector<libcamera::Span<uint8_t>>> mappedBuffers;
       std::map<libcamera::Stream *, std::queue<libcamera::FrameBuffer *>> availableFrameBuffers;
       bool cameraStarted = false;
+      U32 res_width = 4608;
+      U32 res_height = 2519;
     };
 }
 
